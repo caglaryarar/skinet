@@ -10,11 +10,10 @@ import { ShopService } from './shop.service';
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
-  styleUrls: ['./shop.component.scss']
+  styleUrls: ['./shop.component.scss'],
 })
 export class ShopComponent implements OnInit {
-
-  @ViewChild("search", {static: true}) searchTerm!: ElementRef; 
+  @ViewChild('search', { static: true }) searchTerm!: ElementRef;
   products!: IProduct[];
   brands!: IBrand[];
   productTypes!: IProductType[];
@@ -22,92 +21,90 @@ export class ShopComponent implements OnInit {
   totalCount!: number;
 
   sortOptions = [
-    {name : 'Alphabetical', value: 'name'},
-    {name : 'Price: Low to High', value: 'priceAsc'},
-    {name : 'Price: High to Low', value: 'priceDesc'}
+    { name: 'Alphabetical', value: 'name' },
+    { name: 'Price: Low to High', value: 'priceAsc' },
+    { name: 'Price: High to Low', value: 'priceDesc' },
   ];
 
-  constructor(private shopService: ShopService) { }
+  constructor(private shopService: ShopService) {}
 
   ngOnInit(): void {
-   this.getProducts();
-   this.getBrands();
-   this.getProductTypes();
+    this.getProducts();
+    this.getBrands();
+    this.getProductTypes();
   }
 
-  getProducts()
-  {
-    this.shopService.getProducts(this.shopParams).subscribe(response => {
-      if(response)
-      {
-        this.products = response.data;
-        this.shopParams.pageNumber = response.pageIndex;
-        this.shopParams.pageSize = response.pageSize;
-        this.totalCount = response.count;
+  getProducts() {
+    this.shopService.getProducts(this.shopParams).subscribe(
+      (response) => {
+        if (response) {
+          this.products = response.data;
+          this.shopParams.pageNumber = response.pageIndex;
+          this.shopParams.pageSize = response.pageSize;
+          this.totalCount = response.count;
+        }
+      },
+      (error: any) => {
+        console.log(error);
       }
-    }, (error: any) => 
-    {
-      console.log(error);
-    });
+    );
   }
 
-  getBrands()
-  {
-    this.shopService.getBrands().subscribe((response:IBrand[]) => {
-      this.brands = [{id:0, name:"All"}, ...response];
-    }, error => {
-      console.log(error);
-    });
-
+  getBrands() {
+    this.shopService.getBrands().subscribe(
+      (response: IBrand[]) => {
+        this.brands = [{ id: 0, name: 'All' }, ...response];
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
-  getProductTypes()
-  {
-    this.shopService.getProductTypes().subscribe((response:IProductType[]) => {
-      this.productTypes = [{id:0, name:"All"}, ...response];
-    }, error => {
-      console.log(error);
-    });
+  getProductTypes() {
+    this.shopService.getProductTypes().subscribe(
+      (response: IProductType[]) => {
+        this.productTypes = [{ id: 0, name: 'All' }, ...response];
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
-  onBrandIdSelected(brandId:number)
-  {
+  onBrandIdSelected(brandId: number) {
     this.shopParams.brandId = brandId;
     this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
-  onTypeIdSelected(typeId:number)
-  {
+  onTypeIdSelected(typeId: number) {
     this.shopParams.typeId = typeId;
     this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
-  onSortSelected(event:any)
-  {
+  onSortSelected(event: any) {
     this.shopParams.sort = event.target.value;
     this.getProducts();
   }
 
-  onPageChanged(event:any)
-  {
-    this.shopParams.pageNumber = event;
-    this.getProducts();
+  onPageChanged(event: any) {
+    if (this.shopParams.pageNumber !== event) {
+      this.shopParams.pageNumber = event;
+      this.getProducts();
+    }
   }
 
-  onSearch()
-  {
+  onSearch() {
     this.shopParams.search = this.searchTerm.nativeElement.value;
     this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
-  onReset()
-  {
-    this.searchTerm.nativeElement.value = "";
+  onReset() {
+    this.searchTerm.nativeElement.value = '';
     this.shopParams = new ShopParams();
     this.getProducts();
   }
-
 }
