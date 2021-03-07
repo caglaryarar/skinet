@@ -23,6 +23,11 @@ import { ToastrModule } from 'ngx-toastr';
     NavBarComponent
   ]
 })
-export class CoreModule { }
+
+export class CoreModule { 
+
+}
+
+
 
 
